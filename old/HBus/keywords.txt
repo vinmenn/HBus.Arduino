@@ -1,0 +1,11 @@
+# HBus Library data types
+#DATA_TYPE	KEYWORD1
+
+# HBus Library constants
+#CONSTANT	LITERAL1
+
+# Hbus Library methods & functions
+#yyyy	KEYWORD2
+
+# List of objects created in the example sketches.
+#xxxx	KEYWORD3

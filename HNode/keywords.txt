@@ -1,0 +1,62 @@
+# HNode Library data types
+#DATA_TYPE	KEYWORD1
+hb_node_status	KEYWORD1
+hb_name_types	KEYWORD1
+NodeInfo	KEYWORD1
+HNode	KEYWORD1
+
+HBus	KEYWORD1
+HBusPort	KEYWORD1
+HBusSerialPort	KEYWORD1
+HBusTcpPort	KEYWORD1
+
+# HNode Library methods & functions
+#NodeInfo
+begin KEYWORD2
+load KEYWORD2
+save KEYWORD2
+toString KEYWORD2
+#HNode
+loop KEYWORD2
+reset KEYWORD2
+start KEYWORD2
+stop KEYWORD2
+addPin KEYWORD2
+addWire KEYWORD2
+addPinListener KEYWORD2
+delPinListener KEYWORD2
+getPinInfo KEYWORD2
+getWire KEYWORD2
+activate KEYWORD2
+deactivate KEYWORD2
+changeAll KEYWORD2
+getPinByName KEYWORD2
+getPinByType KEYWORD2
+onPinChange KEYWORD2
+addDevice KEYWORD2
+getDeviceInfo KEYWORD2
+getDeviceStatus KEYWORD2
+executeDeviceAction KEYWORD2
+addDeviceListener KEYWORD2
+delDeviceListener KEYWORD2
+processDeviceEvent KEYWORD2
+onDeviceEvent KEYWORD2
+getDevice KEYWORD2
+addSensor KEYWORD2
+getSensorInfo KEYWORD2
+readSensor KEYWORD2
+resetSensor KEYWORD2
+addSensorListener KEYWORD2
+delSensorListener KEYWORD2
+onSensorRead KEYWORD2
+getSensor KEYWORD2
+sensorReadHandler KEYWORD2
+feedSensorListeners KEYWORD2
+readConfiguration KEYWORD2
+writeConfiguration KEYWORD2
+readAll KEYWORD2
+getNameInfo KEYWORD2
+processCommand KEYWORD2
+processAck KEYWORD2
+# Library constants
+#CONSTANT	LITERAL1
