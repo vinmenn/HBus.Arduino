@@ -73,3 +73,12 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+docs/check funzioni.txt
+docs/Rs485 example.fzz
+docs/Links sviluppo arduino.txt
+docs/Rs485 connections.png
+docs/todo.txt
+old/boards.txt
+old/SimpleStack/SimpleStack.h
+old/SimpleStack/readme.md
+old/SimpleStack/LICENSE
