@@ -3,18 +3,21 @@ HBus project Low cost, multi-platform, IoT enabled, home automation project - Ar
 
 ##Prerequisites
  - Arduino ide >= 1.6.3
- - Arduino mega + FTDI adapter (for debug messages)
- - Arduino uno / mini / micro
- - Sensor DHT11/22 ( other sensors are possible of course)
+ - Arduino mega
+ - Arduino Uno
+ - Sensor LM35 ( other sensors are possible of course)
 
 ##Getting started
-- Connect Arduinos with this schema
-![Example schema](https://raw.github.com/vinmenn/HBus.Arduino/master/images/sensor-hub example.png)
-- Open and upload "test_node.ino" into Arduino mega with first Arduino ide instance
-- Open and upload "sensor_node.ino" into Arduino uno/micro with another Arduino ide instance
+###Two board connection example
+- Open and upload "*hub_node.ino*" into Arduino Mega with first Arduino ide instance
+- Open and upload "*sensor_node.ino*" into Arduino Uno with another Arduino ide instance
+- Disconnect from usb and connect Arduinos with this 
+![schema](https://github.com/vinmenn/HBus.Arduino/blob/master/HNode/images/sensor-hub%20example.png)
+
 Open terminal on first instance
 Press '1' to read sensor temperature other node
 Press '2' to read sensor humidity from other node
 Press 't' to toggle Led on other node
 Press 's' to subscribe to 20 temperature readings from other node
 Press 'u' to unsubscribe from other node before subscribe expiration
+You should see sensor temperatures from Arduino Uno showed into terminal window of Arduino Mega
