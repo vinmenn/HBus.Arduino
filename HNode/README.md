@@ -3,9 +3,10 @@ HBus project Low cost, multi-platform, IoT enabled, home automation project - Ar
 
 ##Prerequisites
  - Arduino ide >= 1.6.3
- - Arduino mega
- - Arduino Uno
- - Sensor LM35 ( other sensors are possible of course)
+ - Arduino mega (hub node)
+ - Arduino Uno (sensor node)
+ - Sensor LM35 for sensor node
+ - Sensor DHT11/22 for hub node
 
 ##Getting started
 ###Two board connection example
@@ -15,10 +16,12 @@ HBus project Low cost, multi-platform, IoT enabled, home automation project - Ar
 ![schema](https://github.com/vinmenn/HBus.Arduino/blob/master/HNode/images/sensor-hub%20example.png)
 
 Open terminal on first instance
-- Press '1' to read sensor temperature other node
-- Press '2' to read sensor humidity from other node
-- Press 't' to toggle Led on other node
-- Press 's' to subscribe to 20 temperature readings from other node
-- Press 'u' to unsubscribe from other node before subscribe expiration
+- Press 'l' to toggle Led on sensor node
+- Press 'r' to read remote sensor temperature from LM35
+- Press 's' to subscribe to 20 temperature readings from sensor node
+- Press 'u' to unsubscribe from sensor node before subscribe expiration
+- Press 't' to read local temperature from DHT11/22
+- Press 'h' to read local humidity from DHT11/22
 
-You should see sensor temperatures from Arduino Uno showed into terminal window of Arduino Mega
+You should see sensors values showed into terminal window of Arduino Mega.
+Pressing l will toggle led on Arduino Uno
