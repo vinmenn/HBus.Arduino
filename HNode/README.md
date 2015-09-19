@@ -9,7 +9,7 @@ HBus project Low cost, multi-platform, IoT enabled, home automation project - Ar
 
 ##Getting started
 - Connect Arduinos with this schema
-<schema>
+![Example schema](https://raw.github.com/vinmenn/HBus.Arduino/master/images/sensor-hub example.png)
 - Open and upload "test_node.ino" into Arduino mega with first Arduino ide instance
 - Open and upload "sensor_node.ino" into Arduino uno/micro with another Arduino ide instance
 Open terminal on first instance
