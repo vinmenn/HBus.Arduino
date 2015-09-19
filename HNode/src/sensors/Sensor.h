@@ -59,13 +59,14 @@ typedef struct {
 
 //External handler
 extern "C" {
-	// callback function types
-    typedef uint8_t (*sensorReadCallback)(hb_sensor_read_t sensorRead);
+	// callback function types called from node -> external sketches
+  typedef uint8_t (*sensorReadCallback)(hb_sensor_read_t sensorRead);
 } 
 class HBusSensorController
 {
    public:
-      virtual void onSensorRead(hb_sensor_read_t sensorRead) {};
+    // callback function called from sensors instances -> node
+    virtual void onSensorRead(hb_sensor_read_t sensorRead) {};
 };
 
 class Sensor {

@@ -48,9 +48,10 @@ const uint8_t MAX_COMMANDS = 32;    // Max number of supported commands
 const uint8_t MAX_ACTIONS = 4;      // Max number of device actions
 const uint16_t MAX_EEPROM = 0x1000;   // Max EEPRom memory
 const uint16_t DEFAULT_EEPROM = 0x800;   //Offset for default configuration
+const uint16_t MIN_ANALOG = 0;      //Min analog ADC value
+const uint16_t MAX_ANALOG = 1023;   //Max analog ADC value
 #endif
-
-#if defined(HW_TYPE) && HW_TYPE != HW_ARDUINO_MEGA
+#if defined(HW_TYPE) && (HW_TYPE == HW_ARDUINO_UNO || HW_TYPE == HW_ARDUINO_MINI)
 const uint8_t MAX_NODES = 8;		  // Max network nodes
 const uint8_t MAX_PORTS = 2;		  // Max Communication serial ports
 const uint8_t MAX_READ = 100;		  // Data reception timeout
@@ -67,6 +68,8 @@ const uint8_t MAX_COMMANDS = 32;  // Max number of supported commands
 const uint8_t MAX_ACTIONS = 4;    // Max number of device actions
 const uint16_t MAX_EEPROM = 0x400;   // Max EEPRom memory
 const uint16_t DEFAULT_EEPROM = 0x200;   //Offset for default configuration
+const uint16_t MIN_ANALOG = 0;      //Min analog ADC value
+const uint16_t MAX_ANALOG = 1023;   //Max analog ADC value
 #endif
 
 //-------------------------------------------------------

@@ -271,7 +271,7 @@ class HNode : HBusMessageHandler, public HBusPinController, HBusDeviceController
     Pin* getPinByName(char* name);
     Pin* getPinByType(uint8_t index, hb_pin_type type);
     void onPinChange(char *name, uint32_t value);
-    //pinChangeCallback onPinChangeCallback;
+    pinChangeCallback onPinChangeCallback;
 #endif
     // Device commands
 #if defined(USE_DEVICES) && USE_DEVICES == 1
@@ -289,6 +289,7 @@ class HNode : HBusMessageHandler, public HBusPinController, HBusDeviceController
 #if defined(USE_SENSORS) && USE_SENSORS == 1
     uint8_t addSensor(Sensor *sensor);
     void getSensorInfo(uint8_t index);
+    hb_sensor_read_t readSensor(char* name);
     uint8_t pushSensorRead(char* name);
     uint8_t resetSensor(char* name);
     uint8_t addSensorListener(char* name, hb_address_t source, uint8_t port, uint8_t interval, uint16_t expire);
@@ -491,14 +492,11 @@ void HNode::loop()
         }
         if (strcmp(_pin[i]->name, _wire[w]->input) == 0) {
           if (_wire[w]->address == 0) {
-            //Process local HBus command
+            //Process local HBus command simulating reception from remote
             _msg.command = _wire[w]->command;
             memcpy(_msg.data, _wire[w]->data, l);
-            //&_msg.data = _wire[w]->data;
             _msg.length = l;
-            
             processCommand(_msg, 0xff);
-            
           }
           else {
             //Send remote HBus command
@@ -1025,7 +1023,7 @@ void HNode::onPinChange(char *name, uint32_t value)
   }
   if (onPinChangeCallback != 0)
     onPinChangeCallback(name, value);
-}}
+}
 //-----------------------------------------------------------
 // Returns wire information
 //-----------------------------------------------------------
@@ -1328,12 +1326,29 @@ void HNode::getSensorInfo(uint8_t index)
         _bus->setError(SENSOR_NOT_FOUND);
 }
 //-----------------------------------------------------------
-// Read sensor value
+// Read sensor value and return it
+//-----------------------------------------------------------
+hb_sensor_read_t HNode::readSensor(char* name)
+{
+#if defined(DEBUG) && DEBUG == 1 //DEBUG on Serial
+  Serial << "\tsensorRead: " << name << endl;
+#endif
+  Sensor *sensor = getSensor(name);
+
+  hb_sensor_read_t value;
+
+  if (sensor != 0) ;
+    sensor->read(&value);
+  
+  return value;
+}
+//-----------------------------------------------------------
+// Read sensor value and push into tx stack
 //-----------------------------------------------------------
 uint8_t HNode::pushSensorRead(char* name)
 {
 #if defined(DEBUG) && DEBUG == 1 //DEBUG on Serial
-  Serial << "\tpushSensorRead: " << name;
+  Serial << "\tpushSensorRead: " << name << endl;
 #endif
   Sensor *sensor = getSensor(name);
 
@@ -1349,9 +1364,6 @@ uint8_t HNode::pushSensorRead(char* name)
   _tx->pushLong(value.time);
   _tx->pushFloat(value.value);
 
-#if defined(DEBUG) && DEBUG == 1 //DEBUG on Serial
-  // Serial << " = " << value.value << endl;
-#endif
   return true;
 }
 //-----------------------------------------------------------
@@ -2024,10 +2036,10 @@ Serial << "CMD_ACTIVATE" << _tmp_name << endl;
       getSensorInfo(_value[0]);
       break;
     case CMD_READ_SENSOR:
-#if defined(DEBUG) && DEBUG == 1 //DEBUG on Serial
-  Serial << "=> CMD_READ_SENSOR" << endl;
-#endif
       _rx->popName(_tmp_name); //name
+#if defined(DEBUG) && DEBUG == 1 //DEBUG on Serial
+  Serial << "=> CMD_READ_SENSOR" << _tmp_name << endl;
+#endif
       processed = pushSensorRead(_tmp_name);
       break;
     case CMD_RESET_SENSOR:
@@ -2060,8 +2072,8 @@ Serial << "CMD_ACTIVATE" << _tmp_name << endl;
 #endif
       //Pop sensor read from stack
       _rx->popName(value.name);
-      value.time = _tx->popLong();
-      value.value= _tx->popFloat();
+      value.time = _rx->popLong();
+      value.value= _rx->popFloat();
       //Call external handler
       if (onSensorReadCallback!= 0)
         processed = onSensorReadCallback(value);
@@ -2082,7 +2094,30 @@ Serial << "CMD_ACTIVATE" << _tmp_name << endl;
 //-----------------------------------------------------------
 uint8_t HNode::processAck(hb_message_t ack, uint8_t port) 
 {
-    return true; //not really processed from HBus nodes
+  hb_sensor_read_t value;
+
+  //Init rx stacks
+  _rx->setData(ack.data, ack.length);
+  _rx->clearReadIndex();
+  _bus->resetError();
+
+  uint8_t processed = true;
+
+  if ((ack.flags & ACK_MSG) != 0)
+    switch(ack.command)
+    {
+      case CMD_READ_SENSOR:
+        //Pop sensor read from stack
+        _rx->clear();
+        _rx->popName(value.name);
+        value.time = _rx->popLong();
+        value.value= _rx->popFloat();
+        //Call external handler
+        if (onSensorReadCallback!= 0)
+          return onSensorReadCallback(value);
+        break;
+    }
+  return true; //not really processed from HBus nodes
 }
 //===========================================================
 // DEBUG

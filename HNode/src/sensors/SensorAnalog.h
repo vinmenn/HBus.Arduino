@@ -33,13 +33,14 @@
 class SensorAnalog : public Sensor {
   private:
     uint8_t _pin;
-        
+    float _factor;
+    
   public:
     //========================================================
     //Constructors
     //========================================================
     SensorAnalog(SimpleStack *ss);
-    SensorAnalog(char* name, uint8_t pin, char* source, char* hardware, char* unit, float minRange, float maxRange, float scale);
+    SensorAnalog(char* name, uint8_t pin, char* hardware, char* unit, float minRange, float maxRange, float scale);
     //========================================================
     //Methods
     //========================================================
@@ -60,23 +61,24 @@ SensorAnalog::SensorAnalog(SimpleStack *ss) {
 // -------------------------------------------------------
 //Default constructor with parameters
 // -------------------------------------------------------
-SensorAnalog::SensorAnalog(char* name, uint8_t pin, char* source, char* hardware, char* unit, float minRange, float maxRange, float scale) {
+SensorAnalog::SensorAnalog(char* name, uint8_t pin, char* hardware, char* unit, float minRange, float maxRange, float scale) {
 
-    //Set variable configuration
-    strcpy(info.name, name);
-    _pin = pin;
-    strcpy(info.source, source);
-    strcpy(info.hardware, hardware);
-    strcpy(info.unit, unit);
-    info.minRange = minRange;
-    info.maxRange = maxRange;
-    info.scale = scale;
+  //Set variable configuration
+  strcpy(info.name, name);
+  _pin = pin;
+  itoa(pin, info.source, 10);
+  strcpy(info.hardware, hardware);
+  strcpy(info.unit, unit);
+  info.minRange = minRange;
+  info.maxRange = maxRange;
+  info.scale = scale;
+  _factor = (info.maxRange - info.minRange)/ (MAX_ANALOG - MIN_ANALOG) * info.scale;
 }
 // -------------------------------------------------------
 // Init sensor
 // -------------------------------------------------------
 void SensorAnalog::begin() {
-    pinMode(_pin, INPUT);  
+  pinMode(_pin, INPUT);  
 }
 
 // -------------------------------------------------------
@@ -87,7 +89,7 @@ char* SensorAnalog::status() { return ""; }
 // Read sensor value
 // -------------------------------------------------------
 void SensorAnalog::read(hb_sensor_read_t* value) {
-  (*value).value = analogRead(_pin) * info.scale + info.minRange;
+  (*value).value = analogRead(_pin) * _factor + info.minRange;
   (*value).time = scheduler->getTime();
   strcpy((*value).name, info.name);
   
@@ -100,13 +102,14 @@ void SensorAnalog::read(hb_sensor_read_t* value) {
 // -------------------------------------------------------
 void SensorAnalog::deserializeConfig(SimpleStack *ss) {
   ss->popName(info.name);
-  _pin = ss->popByte();
   ss->popName(info.source);
+  _pin = (uint8_t) atoi(info.source);
   ss->popName(info.hardware);
   ss->popName(info.unit);
   info.minRange = ss->popFloat();
   info.maxRange = ss->popFloat();
   info.scale = ss->popFloat();
+  _factor = (info.maxRange - info.minRange)/ (MAX_ANALOG - MIN_ANALOG) * info.scale;
 }
 // -------------------------------------------------------
 // serialize configuration
@@ -115,7 +118,6 @@ void SensorAnalog::deserializeConfig(SimpleStack *ss) {
 void SensorAnalog::serializeConfig(SimpleStack *ss) {
   //Push data
   ss->pushName(info.name);
-  ss->pushByte(_pin);
   ss->pushName(info.source);
   ss->pushName(info.hardware);
   ss->pushName(info.unit);

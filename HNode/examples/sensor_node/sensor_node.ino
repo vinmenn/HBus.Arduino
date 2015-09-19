@@ -33,11 +33,11 @@
 #define DEBUG               3   // 0 No debug, 1 serial, 2 lcd, 3 led
 #define DEBUG_PORT          Serial
 #define DEFAULT_WIDTH       1   // Address width
-#define NODE_ADDRESS        2   // HBus address
+#define NODE_ADDRESS        4   // HBus address
 #define HW_TYPE             HW_ARDUINO_UNO
 #define HBUS_SERIAL         Serial
 //Node configuration
-#define USE_PINS            0
+#define USE_PINS            1
 #define USE_DEVICES         0
 #define USE_SENSORS         1
 #define USE_CONFIGURATION   0
@@ -105,12 +105,15 @@ HNode node(bus);
 //-----------------------------------------------------------------------------
 //Node devices & sensors
 //-----------------------------------------------------------------------------
+#if defined(USE_PINS) && USE_PINS == 1
+  Pin pin01("LS401", LED_PIN, 0, pinOutput, outputToggle); 
+#endif
 #if defined(USE_DEVICES) && USE_DEVICES == 1
   //Define devices here
 #endif
 #if defined(USE_SENSORS) && USE_SENSORS == 1
   //Define sensors here
-  SensorAnalog sns21("SNS21", LM35_PIN, "Lm35", "°C", 0, 150, 3.332248);	  // Lm35 analog sensor
+  SensorAnalog sns41("SNS41", LM35_PIN, "Lm35", "°C", 0, 150, 2.6697);	  // Lm35 analog sensor
   hb_sensor_read_t rd;
 #endif
 
@@ -118,12 +121,11 @@ HNode node(bus);
 // Debug message with led
 void blink(uint8_t n) {
     for(uint8_t i=0;i<n;i++) {
-      digitalWrite(LED_PIN, LOW);
-      delay(250);
       digitalWrite(LED_PIN, HIGH);
       delay(250);
+      digitalWrite(LED_PIN, LOW);
+      delay(250);
     }
-    digitalWrite(LED_PIN, LOW);
 }
 #endif
 
@@ -138,7 +140,7 @@ void setup() {
 
 #if defined(USE_CONFIGURATION) || USE_CONFIGURATION != 1
   //Use fixed configuration from code
-  strcpy(node.info.name , "ND002");
+  strcpy(node.info.name , "ND004");
   strcpy(node.info.description , "sensor node");
   strcpy(node.info.type , "SENSR");
   strcpy(node.info.hardware , "UNO");
@@ -150,6 +152,8 @@ void setup() {
 //Pins configuration
 #if defined(USE_PINS) && USE_PINS == 1
   //Add pins configuration here
+  node.addPin(&pin01); 
+  
 #if defined(DEBUG) && DEBUG == 1 //DEBUG on SERIAL
   DEBUG_PORT << "pins & wires configured" << endl;
 #endif
@@ -164,7 +168,7 @@ void setup() {
 
 #if defined(USE_SENSORS) && USE_SENSORS == 1
   //Add sensors configuration here
-  node.addSensor(&sns21);   //Temperature sensor 
+  node.addSensor(&sns41);   //Temperature sensor 
 #if defined(DEBUG) && DEBUG == 1 //DEBUG on SERIAL
   DEBUG_PORT << "sensors configured" << endl;
 #endif

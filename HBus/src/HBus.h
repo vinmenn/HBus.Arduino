@@ -393,7 +393,7 @@ class HBus {
       //Message for the node or in broadcast
       if (for_me || broadcast || no_address)
       {
-        if (type == NORMAL_MSG || type != IMMEDIATE_MSG) {
+        if (type == NORMAL_MSG || type == IMMEDIATE_MSG) {
           //COMMAND RECEIVED
           //External command handler
           //used from external c++ libraries
@@ -401,11 +401,13 @@ class HBus {
           if (_externalHandler) {
             processed = _externalHandler->processCommand(_rx_msg, port);
           }
-          else if (receivedCommand) {
-            //Direct command handler
-            //used from sketches
-            processed = receivedCommand(_rx_msg, port);
-            delay(100);
+          else {
+            if (receivedCommand) {
+              //Direct command handler
+              //used from sketches
+              processed = receivedCommand(_rx_msg, port);
+              delay(100);
+            }
           }
         }
         else {
@@ -414,7 +416,7 @@ class HBus {
           //TODO: Implement correct message id
           //***********************************
           //Waiting for ack : check if id is correct
-          uint16_t id = _rx_msg.data[0] << 8 | _rx_msg.data[1];
+          //uint16_t id = _rx_msg.data[_rx_msg.length-4] << 8 | _rx_msg.data[_rx_msg.length-3];
           if (true)//if (id == _ack_crc)
           {
               //Process ack/nack externally

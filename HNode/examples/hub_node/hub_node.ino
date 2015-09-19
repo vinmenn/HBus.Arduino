@@ -31,7 +31,7 @@
 #define DEBUG               1   // 0 No debug, 1 serial, 2 lcd, 3 led
 #define DEBUG_PORT          Serial
 #define DEFAULT_WIDTH       1   // Address width
-#define NODE_ADDRESS        1   // HBus address
+#define NODE_ADDRESS        3   // HBus address
 #define HW_TYPE             HW_ARDUINO_MEGA
 #define HBUS_SERIAL         Serial1
 //Node configuration
@@ -42,6 +42,7 @@
 #define USE_WATCHDOG        0
 //Pins definitions
 #define TXEN_PIN            0  
+#define DHT_PIN             3
 #define LED_PIN             13
 
 //-----------------------------------------------------------------------------
@@ -51,10 +52,11 @@
 #include <EEPROM.h>
 #endif
 #if defined(USE_PINS) && USE_PINS == 1
-  //Add external pins libraries here
+//Add external pins libraries here
 #endif
 #if defined(USE_SENSORS) && USE_SENSORS == 1
-  //Add external sensor libraries here
+//Add external sensor libraries here
+#include <dht.h> 
 #endif
 #if defined(USE_DEVICES) && USE_DEVICES == 1
   //Add external devices libraries here
@@ -88,6 +90,7 @@
 #if defined(USE_SENSORS) && USE_SENSORS == 1
 //Add HBus sensor libraries here
 #include <sensors/sensor.h>
+#include <sensors/SensorDht.h>
 #endif
 
 //-----------------------------------------------------------------------------
@@ -97,7 +100,7 @@
 HBusPort *port = new HBusSerialPort(&HBUS_SERIAL, TXEN_PIN);
 HBus *bus = new HBus(port);
 HNode node(bus);
-hb_address_t address_2 = 2;
+hb_address_t address_2 = 4;
 char data[MAX_BUFFER];
 
 //-----------------------------------------------------------------------------
@@ -108,6 +111,8 @@ char data[MAX_BUFFER];
 #endif
 #if defined(USE_SENSORS) && USE_SENSORS == 1
   hb_sensor_read_t rd; //read from other nodes
+  SensorDht sns31("SNS31", DHT_PIN, DHT11_TYPE, true);    // Dht11/22 temperature 
+  SensorDht sns32("SNS32", DHT_PIN, DHT11_TYPE, false);   // Dht11/22 humidity
 #endif
 
 uint8_t OnSensorReadCallback(hb_sensor_read_t sr)
@@ -130,7 +135,7 @@ void setup() {
 
 #if defined(USE_CONFIGURATION) || USE_CONFIGURATION != 1
   //Use fixed configuration from code
-  strcpy(node.info.name , "ND001");
+  strcpy(node.info.name , "ND003");
   strcpy(node.info.description , "hub node");
   strcpy(node.info.type , "HUB");
   strcpy(node.info.hardware , "MEGA");
@@ -150,6 +155,8 @@ void setup() {
 
 #if defined(USE_SENSORS) && USE_SENSORS == 1
   //Add sensors configuration here
+  node.addSensor(&sns31);   //Temperature sensor  
+  node.addSensor(&sns32);   //Humidity sensor  
 #endif
 #else
   //Read normal configuration from storage
@@ -193,23 +200,28 @@ void loop() {
     
     switch(DEBUG_PORT.read())
     {
-      //SINGLE ADDRESS NORMAL COMMANDS - SINGLE PORT
-      case '1': //Read temperature from SNS21
-        strncpy(data, "SNS21", 5);
+      case 'l': //Toggle remote led on node 4
+        strncpy(data, "LS401", 5);
+        bus->sendCommand(CMD_ACTIVATE, address_2, (uint8_t *) data, 5, 0);
+        break;
+      case 'r': //Read remote temperature from SNS41 on node 4
+        strncpy(data, "SNS41", 5);
         bus->sendCommand(CMD_READ_SENSOR, address_2, (uint8_t *) data, 5, 0);
         break;
-      case '2': //Read humidity from SNS22
-        strncpy(data, "SNS22", 5);
-        bus->sendCommand(CMD_READ_SENSOR, address_2, (uint8_t *)data, 5, 0);
-        break;
-      case 's': //Subscribe sensor SNS21 every 2 seconds expires after 10 readings
-        strncpy(data, "SNS21", 5);
+      case 's': //Subscribe sensor SNS41 every 2 seconds expires after 10 readings
+        strncpy(data, "SNS41", 5);
         data[5] = 2; data[6] = 0; data[7] = 10;
         bus->sendCommand(CMD_ADD_SENSOR_LISTENER, address_2, (uint8_t *)data, 8, 0);
         break;
       case 'u': //Unsubscribe sensor
-        strncpy(data, "SNS21", 5);
+        strncpy(data, "SNS41", 5);
         bus->sendCommand(CMD_DELETE_SENSOR_LISTENER, address_2, (uint8_t *)data, 5, 0);
+        break;
+      case 't': //Read temperature from local DHT11 sensor (response showed with callback)
+        node.readSensor("SNS31");
+        break;
+      case 'h': //Read humidity from local DHT11 sensor (response showed with callback)
+        node.readSensor("SNS32");
         break;
     }
   } 
