@@ -29,7 +29,7 @@
 // Global defines
 //-------------------------------------------------------
 #define DEBUG               1   // 0 No debug, 1 serial, 2 lcd, 3 led
-#define DEBUG_PORT          Serial1
+#define DEBUG_PORT          Serial
 #define DEFAULT_WIDTH       1   // Address width
 #define NODE_ADDRESS        1   // HBus address
 #define HW_TYPE             HW_ARDUINO_MEGA
@@ -112,8 +112,9 @@ char data[MAX_BUFFER];
 
 uint8_t OnSensorReadCallback(hb_sensor_read_t sr)
 {
+#if defined(DEBUG) && DEBUG == 1 //DEBUG on SERIAL
   DEBUG_PORT << "sensor " << sr.name << " value = " << sr.value << " @ " << sr.time << endl;
-  
+#endif  
   return true;
 }
 
@@ -121,6 +122,7 @@ void setup() {
 #if defined(DEBUG) && DEBUG == 1 //DEBUG on SERIAL
   //Debug port
   DEBUG_PORT.begin(57600);
+  DEBUG_PORT << "node setup..." << endl;
 #endif
 
   //Hbus serial port
