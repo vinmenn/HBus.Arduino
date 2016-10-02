@@ -1,0 +1,12 @@
+{
+  "name": "HNode",
+  "keywords": "Home automation, IoT",
+  "description": "Node with home automation and IoT functions for HBus system",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/vinmenn/HBusNode.git"
+  },
+  "frameworks": "*",
+  "platforms": "*"
+}

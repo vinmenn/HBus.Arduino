@@ -1,0 +1,33 @@
+# HBus Library data types
+#DATA_TYPE	KEYWORD1
+hb_message_types	KEYWORD1
+hb_message_t	KEYWORD1
+hb_node_map_t	KEYWORD1
+HBusMessageHandler	KEYWORD1
+HBus	KEYWORD1
+HBusPort	KEYWORD1
+HBusSerialPort	KEYWORD1
+HBusTcpPort	KEYWORD1
+
+# Hbus Library methods & functions
+#yyyy	KEYWORD2
+begin	KEYWORD2
+checkMessages	KEYWORD2
+sendCommand	KEYWORD2
+sendImmediate	KEYWORD2
+sendAck	KEYWORD2
+sendNack	KEYWORD2
+registerCallback	KEYWORD2
+clearErrors	KEYWORD2
+setError	KEYWORD2
+resetError	KEYWORD2
+getError	KEYWORD2
+totalErrors	KEYWORD2
+#HBusPort
+write	KEYWORD2
+dataAvailable 
+read	KEYWORD2
+clear	KEYWORD2
+receivedCommand	KEYWORD2
+# HBus Library constants
+#CONSTANT	LITERAL1

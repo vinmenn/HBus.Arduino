@@ -4,11 +4,12 @@
   
   Shutter device
   
-  Copyright (C) 2014 Vincenzo Mennella (see license.txt)
+  Copyright (C) 2014-15-16 Vincenzo Mennella (see license.txt)
 
   History
     1.0.0 10/08/2014:   First revision of separated code
     1.0.1 01/08/2015:   Review code
+    1.0.2 11/10/2015:   Added additional device information
   =======================================================
 */
 #ifndef HBUS_DEVICE_H
@@ -86,13 +87,38 @@ class Device
         
         char action[MAX_STRING];
         
-        ss->pushName(info.name);
         ss->pushByte(info.index);
+        ss->pushName(info.name);
+        ss->pushString(""); //Description
+        ss->pushString(""); //Location
+        ss->pushString(""); //Class
+        ss->pushString(""); //Hardware
+        ss->pushString(""); //Version
         ss->pushByte(info.actions);
         if (info.actions > 0)
           for(uint8_t i=0;i<info.actions;i++) {
             strcpy_P(action, info.action[i]);
             ss->pushString(action);
+        }
+    }
+    // de-serialize device information into stack
+    void deserializeInfo(SimpleStack *ss) {
+        
+        char action[MAX_STRING];
+        
+        info.index = ss->popByte();
+        ss->popName(info.name);
+        ss->popString(action); //Description
+        ss->popString(action); //Location
+        ss->popString(action); //Class
+        ss->popString(action); //Hardware
+        ss->popString(action); //Version
+        //Actions
+        info.actions = ss->popByte();
+        if (info.actions > 0)
+          for(uint8_t i=0;i<info.actions;i++) {
+            ss->popString(action);
+            strcpy(info.action[i], action);
         }
     }
     //-----------------------------------------------------------
@@ -139,7 +165,7 @@ DeviceSchedule::DeviceSchedule(Device *pdevice, hb_device_action_t *paction, uin
         //Execute device action
 void DeviceSchedule::execute() {
 #if defined(DEBUG) && DEBUG == 1 //DEBUG on Serial
-  Serial << "devsched " << time << endl;
+  //Serial << "devsched " << time << endl;
 #endif
     // Serial << " device execute " 
         // << _device->info.name << " => "

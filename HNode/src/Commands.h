@@ -1,20 +1,22 @@
 /*
   =======================================================
-  HNode - Home automation/IoT node for HBus project
+  HBus - Home automation/IoT application protocol
+  Commands defines for nodes
   
-  Commands defines
-  
-  Copyright (C) 2014 Vincenzo Mennella (see license.txt)
+  Copyright (C) 2014-15-16 Vincenzo Mennella (see license.txt)
 
   History
     0.0.1 14/08/2014:   First revision
+    0.0.2 01/09/2015:   Updated namespace
   =======================================================
 */
-#ifndef HNODE_COMMANDS_H
-#define HNODE_COMMANDS_H
-//-----------------------------------------------------------
+#ifndef HBUS_COMMANDS_H
+#define HBUS_COMMANDS_H
+
+#define VERSION_HBUS_COMMANDS_H "0.0.2"
+//-------------------------------------------------------
 //ControlNode commands
-//-----------------------------------------------------------
+//-------------------------------------------------------
 //Configuration
 const uint8_t CMD_RESET					= 0x01;	// Reset node
 const uint8_t CMD_FACTORY_DEFAULT		= 0x02;	// Reset node to default configuration
