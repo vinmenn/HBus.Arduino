@@ -25,7 +25,7 @@ getError	KEYWORD2
 totalErrors	KEYWORD2
 #HBusPort
 write	KEYWORD2
-dataAvailable 
+dataAvailable	KEYWORD2
 read	KEYWORD2
 clear	KEYWORD2
 receivedCommand	KEYWORD2
